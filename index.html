@@ -36,48 +36,74 @@
             margin-bottom: 20px;
         }
 
+        form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
+            text-align: center;
         }
 
         .form-group input {
-            width: 97%;
+            width: 150px;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
             transition: border-color 0.3s ease;
+            text-align: center;
         }
 
         .form-group input:hover {
-            border-color: #007bff;
+            border-color: #28a745;
         }
 
-        .form-group button {
+        button {
             font-family: "PT Sans", sans-serif;
-            width: 100%;
-            padding: 10px;
-            background: linear-gradient(45deg, #007bff, #0064cf);
+            padding: 10px 15px;
+            margin-top: 25px;
+            background: linear-gradient(45deg, #28a745, #1e7e34);
             color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
-        .form-group button:hover {
-            background: linear-gradient(45deg, #0064cf, #00448d);
+        button:hover {
+            background: linear-gradient(45deg, #1e7e34, #155d27);
             transform: scale(1.025);
+        }
+
+        .error {
+            color: #c5130d;
+            background-color: #f2dede;
+            border: 1px solid #c5130d;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+            width: 50%;
         }
 
         .results {
             margin-top: 20px;
+            text-align: center;
+            width: 100%;
         }
 
         .result-item {
@@ -86,41 +112,52 @@
             border-radius: 4px;
             margin-bottom: 10px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+
+            .form-group {
+            position: relative;
+            margin: 20px 0;
         }
 
-        .error {
-            color: #d9534f;
-            background-color: #f2dede;
-            border: 1px solid #d9534f;
-            border-radius: 4px;
-            padding: 10px;
-            margin-bottom: 20px;
-            display: none; 
+        .form-group input {
+            padding-left: 40px; 
+            height: 30px;
+            font-size: 16px;
         }
 
+        .flag-icon {
+            width: 24px; 
+            height: 16px; 
+            background-size: cover;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3 2"><rect width="3" height="2" fill="#fff"/><rect width="3" height="1.33" fill="#d52b1e"/><rect width="3" height="0.67" fill="#0039a6"/></svg>');
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+        }
+
+        }
     </style>
 </head>
 
 <body>
     <div class="widget-container">
-        <h2>Введите государственный номер автомобиля и регион</h2>
+        <h2>Введите данные автомобиля</h2>
         <form id="searchForm">
             <div class="form-group">
-                <label for="plateNumber">Госномер автомобиля</label>
-                <input type="text" id="plateNumber" name="plateNumber" placeholder="Введите госномер">
+                <label for="plateNumber">Госномер</label>
+                <input type="text" id="plateNumber" name="plateNumber" placeholder=" A 123 AA " required>
             </div>
             <div class="form-group">
                 <label for="region">Регион</label>
-                <input type="text" id="region" name="region" placeholder="Введите регион">
+                <input type="text" id="region" name="region" placeholder="00 RUS" required>
+                <div class="flag-icon"></div>
             </div>
-            <div class="form-group">
-                <button type="submit"> Добавить автомобиль </button>
-            </div>
+            <button type="submit">Добавить</button>
             <div class="error" id="error"></div>
             <div class="results" id="results"></div>
         </form>
     </div>
-
 
     <script>
         document.getElementById('searchForm').addEventListener('submit', function (event) {
@@ -128,7 +165,7 @@
 
             const plateNumber = document.getElementById('plateNumber').value.trim();
             const region = document.getElementById('region').value.trim();
-            const plateNumberPattern =  /^[АВЕКМНОРСТУХ]{1}\d{3}[АВЕКМНОРСТУХ]{2}$/;
+            const plateNumberPattern = /^[АВЕКМНОРСТУХ]{1}\d{3}[АВЕКМНОРСТУХ]{2}$/;
             const regionPattern = /^\d{2,3}$/;
             const errorDiv = document.getElementById('error');
             const resultsContainer = document.getElementById('results');
@@ -137,7 +174,7 @@
 
             if (plateNumber && !plateNumberPattern.test(plateNumber)) {
                 errorMessage += 'Неверный формат госномера автомобиля.<br>';
-            } 
+            }
 
             if (region && !regionPattern.test(region)) {
                 errorMessage += 'Неверный формат региона.<br>';
@@ -145,10 +182,10 @@
 
             if (errorMessage) {
                 errorDiv.innerHTML = errorMessage;
-                errorDiv.style.display = 'block'; 
-                resultsContainer.innerHTML = ''; 
+                errorDiv.style.display = 'block';
+                resultsContainer.innerHTML = '';
             } else {
-                errorDiv.style.display = 'none'; 
+                errorDiv.style.display = 'none';
 
                 fetch(`https://mysite.local/search?pcode=${(plateNumber + region)}`)
                     .then(response => response.json())
@@ -156,7 +193,7 @@
                         resultsContainer.innerHTML = `
                             <div class="result-item">
                                 <strong>Госномер:</strong> ${plateNumber}<br>
-                                <strong>Регион:</strong> ${region }<br>
+                                <strong>Регион:</strong> ${region}<br>
                                 <em>Результаты поиска: ${JSON.stringify(data)}</em>
                             </div>
                         `;
@@ -171,12 +208,14 @@
                     });
             }
         });
-
     </script>
 
 </body>
 
 </html>
+
+
+
 
 
 
