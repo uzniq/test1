@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Open+Sans&family=PT+Sans&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: "PT Sans", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .widget-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: linear-gradient(45deg, #ffffff, #f3f3f3);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 97%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:hover {
+            border-color: #007bff;
+        }
+
+        .form-group button {
+            font-family: "PT Sans", sans-serif;
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(45deg, #007bff, #0064cf);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .form-group button:hover {
+            background: linear-gradient(45deg, #0064cf, #00448d);
+            transform: scale(1.025);
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .result-item {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .error {
+            color: #d9534f;
+            background-color: #f2dede;
+            border: 1px solid #d9534f;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: none; 
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-body {
+            padding: 20px 0;
+        }
+
+        .modal-footer {
+            padding: 10px 0;
+            border-top: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .modal-footer button {
+            font-family: "PT Sans", sans-serif;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background: linear-gradient(45deg, #007bff, #0064cf);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .modal-footer button:hover {
+            background: linear-gradient(45deg, #1083ff, #017cff);
+            transform: scale(1.05);
+        }
+
+        .modal-footer button:active {
+            background: linear-gradient(45deg, #0058b6, #003975);
+        }
+
+        .close {
+            color: #333;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            text-align: center;
+            line-height: 36px;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #fff;
+            background-color: #d9534f;
+            border-color: #d9534f;
+            transform: scale(1.1);
+        }
+
+        .close:active {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="widget-container">
+        <h2>Введите государственный номер автомобиля, регион или VIN</h2>
+        <form id="searchForm">
+            <div class="form-group">
+                <label for="plateNumber">Госномер автомобиля</label>
+                <input type="text" id="plateNumber" name="plateNumber" placeholder="Введите госномер">
+            </div>
+            <div class="form-group">
+                <label for="region">Регион</label>
+                <input type="text" id="region" name="region" placeholder="Введите регион">
+            </div>
+            <div class="form-group">
+                <button type="submit">Поиск</button>
+            </div>
+            <div class="form-group">
+                <button type="button" id="addCarButton">Добавить автомобиль</button>
+            </div>
+            <div class="error" id="error"></div>
+            <div class="results" id="results"></div>
+        </form>
+    </div>
+
+    <div id="carModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" id="closeModal">&times;</span>
+                <h2>Информация</h2>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="modalCloseButton">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const plateNumber = document.getElementById('plateNumber').value.trim();
+            const region = document.getElementById('region').value.trim();
+            const plateNumberPattern =  /^[АВЕКМНОРСТУХ]{1}\d{3}[АВЕКМНОРСТУХ]{2}$/;
+            const regionPattern = /^\d{2,3}$/;
+            const errorDiv = document.getElementById('error');
+            const resultsContainer = document.getElementById('results');
+
+            let errorMessage = '';
+
+            if (plateNumber && !plateNumberPattern.test(plateNumber)) {
+                errorMessage += 'Неверный формат госномера автомобиля.<br>';
+            } 
+
+            if (region && !regionPattern.test(region)) {
+                errorMessage += 'Неверный формат региона.<br>';
+            }
+
+            if (errorMessage) {
+                errorDiv.innerHTML = errorMessage;
+                errorDiv.style.display = 'block'; 
+                resultsContainer.innerHTML = ''; 
+            } else {
+                errorDiv.style.display = 'none'; 
+
+                fetch(`https://mysite.local/search?pcode=${(plateNumber + region)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        resultsContainer.innerHTML = `
+                            <div class="result-item">
+                                <strong>Госномер:</strong> ${plateNumber}<br>
+                                <strong>Регион:</strong> ${region }<br>
+                                <em>Результаты поиска: ${JSON.stringify(data)}</em>
+                            </div>
+                        `;
+                    })
+                    .catch(error => {
+                        resultsContainer.innerHTML = `
+                            <div class="result-item">
+                                <strong>Ошибка:</strong> Не удалось выполнить запрос.<br>
+                                <em>${error.message}</em>
+                            </div>
+                        `;
+                    });
+            }
+        });
+
+        document.getElementById('addCarButton').addEventListener('click', function () {
+            const plateNumber = document.getElementById('plateNumber').value.trim();
+            const region = document.getElementById('region').value.trim();
+            const vin = document.getElementById('vin').value.trim();
+
+            if (!plateNumber && !region && !vin) {
+                document.getElementById('error').innerHTML = 'Вы пропустили одно или несколько обязательных полей.<br>';
+                document.getElementById('error').style.display = 'block'; 
+                return;
+            }
+
+            const modal = document.getElementById('carModal');
+            const modalMessage = document.getElementById('modalMessage');
+            modalMessage.textContent = `Автомобиль с госномером ${plateNumber || 'не указан'}, регионом ${region || 'не указан'}, и VIN номером ${vin || 'не указан'} добавлен!`;
+            modal.style.display = 'block';
+        });
+
+        document.getElementById('modalCloseButton').addEventListener('click', function () {
+            document.getElementById('carModal').style.display = 'none';
+        });
+
+        document.getElementById('closeModal').addEventListener('click', function () {
+            document.getElementById('carModal').style.display = 'none';
+        });
+
+        window.onclick = function (event) {
+            const modal = document.getElementById('carModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    </script>
+
+</body>
+
+</html>
+
+
+
+
+
